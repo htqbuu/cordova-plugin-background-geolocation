@@ -255,9 +255,6 @@ enum {
             DDLogDebug(@"%@ found most accurate stationary before timeout", TAG);
         } else if (-[aquireStartTime timeIntervalSinceNow] < maxLocationWaitTimeInSeconds) {
             // we still have time to aquire better location
-            DDLogDebug(@"==========================");
-            DDLogDebug(@"Still have time to aquire better location");
-            DDLogDebug(@"==========================");
             return;
         }
         
@@ -279,6 +276,9 @@ enum {
             DDLogDebug(@"%@ found most accurate location before timeout", TAG);
         } else if (-[aquireStartTime timeIntervalSinceNow] < maxLocationWaitTimeInSeconds) {
             // we still have time to aquire better location
+            DDLogDebug(@"==========================");
+            DDLogDebug(@"Still have time to aquire better location");
+            DDLogDebug(@"==========================");
             return;
         }
         
@@ -288,8 +288,8 @@ enum {
         
         // We should have a good sample for speed now, power down our GPS as configured by user.
         isAcquiringSpeed = NO;
-        locationManager.desiredAccuracy = _config.desiredAccuracy.integerValue;
-        locationManager.distanceFilter = [self calculateDistanceFilter:[bestLocation.speed floatValue]];
+        locationManager.desiredAccuracy = [_config decodeDesiredAccuracy];
+        locationManager.distanceFilter = _config.distanceFilter.integerValue;
         [self startUpdatingLocation];
         
     } else if (actAsInMode == MAURForegroundMode) {
