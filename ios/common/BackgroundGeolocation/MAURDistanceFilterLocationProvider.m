@@ -255,6 +255,9 @@ enum {
             DDLogDebug(@"%@ found most accurate stationary before timeout", TAG);
         } else if (-[aquireStartTime timeIntervalSinceNow] < maxLocationWaitTimeInSeconds) {
             // we still have time to aquire better location
+            DDLogDebug(@"==========================");
+            DDLogDebug(@"Still have time to aquire better location");
+            DDLogDebug(@"==========================");
             return;
         }
         
