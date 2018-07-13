@@ -46,10 +46,10 @@ public class DistanceFilterLocationProvider extends AbstractLocationProvider imp
     private static final String STATIONARY_LOCATION_MONITOR_ACTION = P_NAME + ".STATIONARY_LOCATION_MONITOR_ACTION";
 
     private static final long STATIONARY_TIMEOUT                                = 5 * 1000 * 60;    // 5 minutes.
-    private static final long STATIONARY_LOCATION_POLLING_INTERVAL_LAZY         = 3 * 1000 * 60;    // 3 minutes.
-    private static final long STATIONARY_LOCATION_POLLING_INTERVAL_AGGRESSIVE   = 1 * 1000 * 60;    // 1 minute.
+    private static final long STATIONARY_LOCATION_POLLING_INTERVAL_LAZY         = 1000 * 30;    // 30 sec.
+    private static final long STATIONARY_LOCATION_POLLING_INTERVAL_AGGRESSIVE   = 1000 * 30;    // 30 sec.
     private static final Integer MAX_STATIONARY_ACQUISITION_ATTEMPTS = 5;
-    private static final Integer MAX_SPEED_ACQUISITION_ATTEMPTS = 3;
+    private static final Integer MAX_SPEED_ACQUISITION_ATTEMPTS = 2;
 
     private Boolean isMoving = false;
     private Boolean isAcquiringStationaryLocation = false;
@@ -119,6 +119,7 @@ public class DistanceFilterLocationProvider extends AbstractLocationProvider imp
         scaledDistanceFilter = mConfig.getDistanceFilter();
         isStarted = true;
         setPace(false);
+
     }
 
     @Override
@@ -141,7 +142,8 @@ public class DistanceFilterLocationProvider extends AbstractLocationProvider imp
     public void onCommand(int commandId, int arg1) {
         switch(commandId) {
             case CMD_SWITCH_MODE:
-                setPace(arg1 == BackgroundGeolocationFacade.BACKGROUND_MODE ? false : true);
+//                setPace(arg1 == BackgroundGeolocationFacade.BACKGROUND_MODE ? false : true);
+                setPace(true);
                 return;
         }
     }
@@ -198,7 +200,7 @@ public class DistanceFilterLocationProvider extends AbstractLocationProvider imp
                 // Turn on each provider aggressively for a short period of time
                 List<String> matchingProviders = locationManager.getAllProviders();
                 for (String provider: matchingProviders) {
-                    if (provider != LocationManager.PASSIVE_PROVIDER) {
+                    if (!LocationManager.PASSIVE_PROVIDER.equals(provider)) {
                         locationManager.requestLocationUpdates(provider, 0, 0, this);
                     }
                 }
@@ -347,12 +349,13 @@ public class DistanceFilterLocationProvider extends AbstractLocationProvider imp
     }
 
     private Integer calculateDistanceFilter(Float speed) {
-        Double newDistanceFilter = (double) mConfig.getDistanceFilter();
-        if (speed < 100) {
-            float roundedDistanceFilter = (round(speed / 5) * 5);
-            newDistanceFilter = pow(roundedDistanceFilter, 2) + (double) mConfig.getDistanceFilter();
-        }
-        return (newDistanceFilter.intValue() < 1000) ? newDistanceFilter.intValue() : 1000;
+//        Double newDistanceFilter = (double) mConfig.getDistanceFilter();
+//        if (speed < 100) {
+//            float roundedDistanceFilter = (round(speed / 5) * 5);
+//            newDistanceFilter = pow(roundedDistanceFilter, 2) + (double) mConfig.getDistanceFilter();
+//        }
+//        return (newDistanceFilter.intValue() < 1000) ? newDistanceFilter.intValue() : 1000;
+        return mConfig.getDistanceFilter();
     }
 
     private void startMonitoringStationaryRegion(Location location) {
