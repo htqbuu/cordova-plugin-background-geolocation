@@ -48,8 +48,8 @@ public class DistanceFilterLocationProvider extends AbstractLocationProvider imp
     private static final long STATIONARY_TIMEOUT                                = 5 * 1000 * 60;    // 5 minutes.
     private static final long STATIONARY_LOCATION_POLLING_INTERVAL_LAZY         = 1000 * 30;    // 30 sec.
     private static final long STATIONARY_LOCATION_POLLING_INTERVAL_AGGRESSIVE   = 1000 * 30;    // 30 sec.
-    private static final Integer MAX_STATIONARY_ACQUISITION_ATTEMPTS = 5;
-    private static final Integer MAX_SPEED_ACQUISITION_ATTEMPTS = 2;
+    private static final Integer MAX_STATIONARY_ACQUISITION_ATTEMPTS = 2;
+    private static final Integer MAX_SPEED_ACQUISITION_ATTEMPTS = 1;
 
     private Boolean isMoving = false;
     private Boolean isAcquiringStationaryLocation = false;
@@ -299,7 +299,8 @@ public class DistanceFilterLocationProvider extends AbstractLocationProvider imp
             }
             if (++locationAcquisitionAttempts == MAX_STATIONARY_ACQUISITION_ATTEMPTS) {
                 isAcquiringStationaryLocation = false;
-                startMonitoringStationaryRegion(stationaryLocation);
+                // we suffer issue that at starting time, location update is very slow, so we don't need this
+//                startMonitoringStationaryRegion(stationaryLocation);
                 handleStationary(stationaryLocation, stationaryRadius);
                 return;
             } else {
@@ -414,7 +415,7 @@ public class DistanceFilterLocationProvider extends AbstractLocationProvider imp
         //  location at regular intervals with a one-shot.
         stationaryLocationPollingInterval = interval;
         alarmManager.cancel(stationaryLocationPollingPI);
-        long start = System.currentTimeMillis() + (60 * 1000);
+        long start = System.currentTimeMillis() + interval;
         alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, start, interval, stationaryLocationPollingPI);
     }
 
